@@ -9,6 +9,12 @@ chrome.extension.onMessage.addListener(function (request, sender, sendResponse) 
   let targetID = null
   let viewTabUrl = chrome.extension.getURL('screenshot.html?id=' + id++)
   let statusText = 'startX ' + request.startX + ' startY ' + request.startY + ' endX ' + request.endX + ' endY ' + request.endY
+  let currentTabUrl = null
+
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    console.log(tabs[0]);
+    currentTabUrl = tabs[0].url;
+  });
 
   chrome.tabs.captureVisibleTab(null, null, function (screenshotUrl) {
     chrome.tabs.onUpdated.addListener(function listener(tabID, changedProps) {
@@ -20,7 +26,7 @@ chrome.extension.onMessage.addListener(function (request, sender, sendResponse) 
       for (var i = 0; i < views.length; i++) {
         var view = views[i];
         if (view.location.href == viewTabUrl) {
-          view.setScreenshotUrl(screenshotUrl, request);
+          view.setScreenshotUrl(screenshotUrl, currentTabUrl, request);
           break;
         }
       }

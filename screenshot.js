@@ -4,7 +4,7 @@ var img_access_path = '/static/images/';
 var img_file_prefix = 'img_';
 
 
-function setScreenshotUrl(url, coords) {
+function setScreenshotUrl(url, currenturl, coords) {
   let statusText = 'startX ' + coords.startX + ' startY ' + coords.startY + ' endX ' + coords.endX + ' endY ' + coords.endY
   window.alert(statusText)
   let canvas = document.getElementById('test')
@@ -21,7 +21,7 @@ function setScreenshotUrl(url, coords) {
     ctx.drawImage(img, startX, startY, sWidth, sHeight, 0, 0, sWidth, sHeight)
      var dataURL = canvas.toDataURL("image/png");
      var img64 = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-     sendBase64ToServer(img64);
+     sendBase64ToServer(img64, currenturl);
   })
   img.src = url
 
@@ -30,10 +30,11 @@ function setScreenshotUrl(url, coords) {
 
 }
 
-var sendBase64ToServer = function(base64){
+var sendBase64ToServer = function(base64, currenturl){
+  console.log(currenturl);
     var httpPost = new XMLHttpRequest(),
         path = "http://ec2-52-79-155-110.ap-northeast-2.compute.amazonaws.com:3000/uploadImage/",
-        data = JSON.stringify({image: base64});
+        data = JSON.stringify({image: base64, ref: currenturl});
     httpPost.onreadystatechange = function(err) {
             if (httpPost.readyState == 4 && httpPost.status == 200){
                 console.log(httpPost.responseText);
