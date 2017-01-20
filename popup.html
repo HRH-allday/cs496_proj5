@@ -2,11 +2,28 @@
 <html>
 <head>
 	<title> Easy ScreenShot</title>
+	<style type="text/css">
+		a:link { color: black; text-decoration: none;}
+		a:visited { color: #AEADA9; text-decoration: none;}
+		a:hover { color: blue; text-decoration: underline;}
+		body {
+			width: 300px;
+		}
+	</style>
+
 </head>
 <body>
-<li>
-	<ul> Take ScreenShot </ul>
-	<ul> ----------------</ul>
-</li>
+
+	<div id = "download" style="text-align:center;">
+	<p onclick = "takeScreenShot()"> Take a Screenshot! </p>
+	<p> ___________________________________________________</p>
+	</div>
+
+
+	<div id="container" style="text-align:center;">
+	</div>
+
+	<script src="popup.js"></script>
+	<!-- #container -->
 </body>
 </html>
