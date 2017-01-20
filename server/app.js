@@ -11,6 +11,7 @@ var mongodb = require('mongodb');
 var fs = require('fs');
 var screenshotlist = require('/home/ubuntu/screenshot/screenshot_list');
 
+let CanvasImage = require('./canvasImage')
 
 var http_protocol = 'http://';
 var server_address = '52.79.155.110:3000';
@@ -79,6 +80,82 @@ app.post('/uploadImage', function (req, res) {
   });
 });
 
+app.post('/savePosition/:imgURL/:posX/:posY', function(req, res) {
+  let ci = new CanvasImage({
+    imgURL: decodeURIComponent(req.params.imgURL),
+    posX: req.params.posX,
+    posY: req.params.posY
+  })
+  ci.save(function(err){
+    if(err){
+      console.log('save failed')
+      res.send({result: 'failed'})
+    } else {
+      console.log('position save successful')
+      res.send({result: 'success'})
+    }
+  })
+})
+
+app.put('/updatePosition/:imgURL/:posX/:posY', function (req, res) {
+  CanvasImage.findOneAndUpdate(
+    {
+      imgURL: decodeURIComponent(req.params.imgURL)
+    },
+    {
+      posX: req.params.posX,
+      posY: req.params.posY
+    }, 
+    function (err) {
+      if (err) {
+        console.log('save failed')
+        res.send({ result: 'failed' })
+      } else {
+      console.log('position save successful')
+      res.send({result: 'success'})
+      }
+    }
+  )
+})
+
+app.delete('/deletePosition/:imgURL', function (req, res) {
+  CanvasImage.remove(
+    {
+      imgURL: decodeURIComponent(req.params.imgURL)
+    },
+    function (err) {
+      if (err) {
+        console.log('remove failed')
+        res.send({ result: 'failed' })
+      } else {
+      console.log('position save successful')
+      res.send({result: 'success'})
+      }
+    }
+  )
+})
+
+app.get('/getPosition', function(req, res) {
+  CanvasImage.find(function (err, list) {
+    if (err) {
+      console.log(err)
+      return res.status(500).json({error: 'database failure'});
+    }
+    if(!list){
+      console.log(err);
+      return res.status(500).json({error: 'cannot query'});
+    }
+    let newList = list.map(function (item) {
+      return {
+        imgURL: encodeURIComponent(item.imgURL),
+        posX: item.posX,
+        posY: item.posY
+      }
+    })
+    console.log(newList)
+    res.json(newList)
+  })
+})
 
 function decodeBase64Image(dataString) {
   var response = {};
